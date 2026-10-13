@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NY Ovals TeamOS</title>
+  <style>
+    :root {
+      --navy: #183153;
+      --navy-dark: #10233d;
+      --green: #2f7d4a;
+      --green-soft: #eaf5ee;
+      --blue-soft: #edf4fb;
+      --cream: #f7f8f5;
+      --white: #ffffff;
+      --text: #1f2933;
+      --muted: #667085;
+      --line: #e2e6e9;
+      --danger: #b42318;
+      --danger-soft: #fef3f2;
+      --warning: #b54708;
+      --warning-soft: #fff7ed;
+      --shadow: 0 8px 24px rgba(16, 35, 61, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 245px 1fr;
+    }
+
+    .sidebar {
+      background: var(--navy-dark);
+      color: white;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 6px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .brand h1 {
+      font-size: 17px;
+      margin: 0;
+    }
+
+    .brand p {
+      font-size: 12px;
+      margin: 3px 0 0;
+      color: #b9c6d4;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+      margin-top: 24px;
+    }
+
+    .nav button {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: #d7e0e9;
+      background: transparent;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      color: white;
+      background: rgba(255,255,255,0.10);
+    }
+
+    .sidebar-note {
+      margin-top: auto;
+      color: #aab8c7;
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 12px 6px 0;
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .topbar {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 28px;
+      background: var(--white);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .topbar p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .page {
+      display: none;
+      padding: 28px;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .page-heading h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      color: var(--navy-dark);
+    }
+
+    .page-heading p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .card-pad {
+      padding: 20px;
+    }
+
+    .card-title {
+      margin: 0;
+      color: var(--navy-dark);
+      font-size: 17px;
+    }
+
+    .card-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 6px 0 0;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      transition: 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--navy-dark);
+      border-color: var(--line);
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-color: #fecdca;
+    }
+
+    .btn-small {
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
+      padding: 18px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--navy-dark);
+    }
+
+    .stat-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .section-gap {
+      margin-top: 18px;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .list-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fff;
+    }
+
+    .list-row strong {
+      color: var(--navy-dark);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--blue-soft);
+      color: var(--navy);
+    }
+
+    .badge.green {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .badge.warning {
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #344054;
+      margin-bottom: 6px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid #ccd2d8;
+      border-radius: 9px;
+      padding: 10px 11px;
+      background: white;
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #7ea58a;
+      box-shadow: 0 0 0 3px rgba(47,125,74,0.10);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
+
+    .player-layout {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .player-button {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 11px;
+      padding: 12px;
+      text-align: left;
+      margin-bottom: 8px;
+    }
+
+    .player-button:hover,
+    .player-button.active {
+      border-color: #8ab399;
+      background: #f6fbf7;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .info-box {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      background: #fbfcfd;
+    }
+
+    .info-box small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .availability-table,
+    .bowling-table,
+    .attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+
+    .availability-table th,
+    .availability-table td,
+    .bowling-table th,
+    .bowling-table td,
+    .attendance-table th,
+    .attendance-table td {
+      text-align: left;
+      padding: 11px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td select {
+      min-width: 120px;
+    }
+
+    .status-going {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .status-maybe {
+      color: var(--warning);
+      font-weight: 700;
+    }
+
+    .status-no {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .lineup-builder {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 18px;
+    }
+
+    .checkbox-list {
+      display: grid;
+      gap: 8px;
+      max-height: 430px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+    }
+
+    .check-row input {
+      width: auto;
+    }
+
+    .lineup-item {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      margin-bottom: 8px;
+    }
+
+    .lineup-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--blue-soft);
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .move-buttons {
+      display: flex;
+      gap: 4px;
+    }
+
+    .move-buttons button {
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 7px;
+      padding: 5px 8px;
+    }
+
+    .warning-box {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--warning-soft);
+      color: var(--warning);
+      border: 1px solid #fed7aa;
+      margin-top: 14px;
+      line-height: 1.5;
+      font-size: 13px;
+    }
+
+    .empty-state {
+      padding: 24px;
+      text-align: center;
+      border: 1px dashed #cfd6dc;
+      border-radius: 11px;
+      color: var(--muted);
+      background: #fcfdfd;
+    }
+
+    .event-strip {
+      border-left: 4px solid var(--green);
+      padding: 14px 16px;
+      background: #f7fbf8;
+      border-radius: 0 10px 10px 0;
+      margin-top: 14px;
+    }
+
+    .event-strip strong {
+      color: var(--navy-dark);
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .mobile-menu {
+      display: none;
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      background: var(--navy-dark);
+      color: white;
+      padding: 11px 14px;
+      border-radius: 9px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: 0.2s ease;
+      z-index: 100;
+      font-size: 13px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1020px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        height: auto;
+        position: static;
+        padding: 14px 18px;
+      }
+
+      .brand {
+        padding-bottom: 12px;
+        border-bottom: 0;
+      }
+
+      .nav {
+        display: none;
+        margin-top: 8px;
+      }
+
+      .nav.open {
+        display: grid;
+      }
+
+      .sidebar-note {
+        display: none;
+      }
+
+      .mobile-menu {
+        display: block;
+        position: absolute;
+        right: 18px;
+        top: 19px;
+        border: 1px solid rgba(255,255,255,0.2);
+        color: white;
+        background: transparent;
+        border-radius: 8px;
+        padding: 7px 10px;
+      }
+
+      .grid-4,
+      .profile-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .player-layout,
+      .lineup-builder {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .topbar,
+      .page {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .grid-4,
+      .grid-2,
+      .form-grid,
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+    }
+
+    @media print {
+      .sidebar,
+      .topbar,
+      .no-print,
+      .toast {
+        display: none !important;
+      }
+
+      .app-shell {
+        display: block;
+      }
+
+      body {
+        background: white;
+      }
+
+      .page {
+        display: none !important;
+      }
+
+      #match-sheet-print {
+        display: block !important;
+        padding: 0;
+      }
+
+      .print-sheet {
+        box-shadow: none;
+        border: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <button class="mobile-menu" id="mobileMenuBtn">Menu</button>
+
+      <div class="brand">
+        <div>
+          <h1>NY Ovals TeamOS</h1>
+          <p>Youth cricket team manager</p>
+        </div>
+      </div>
+
+      <nav class="nav" id="sideNav">
+        <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+        <button class="nav-btn" data-page="availability">Availability</button>
+        <button class="nav-btn" data-page="attendance">Attendance</button>
+        <button class="nav-btn" data-page="players">Players</button>
+        <button class="nav-btn" data-page="lineup">Match Lineup</button>
+        <button class="nav-btn" data-page="bowling">Bowling Plan</button>
+      </nav>
+
+      <div class="sidebar-note">
+        Built for the NY Ovals coaching staff. Data stays in this browser for now, which keeps the first version simple and easy to demo.
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h2 id="topbarTitle">Dashboard</h2>
+          <p id="topbarSubtitle">A quick look at the team before practice or game day.</p>
+        </div>
+        <div class="topbar-actions no-print">
+          <button class="btn btn-secondary" id="loadDemoBtn">Load demo roster</button>
+          <button class="btn btn-secondary" id="exportBtn">Export data</button>
+          <button class="btn btn-danger" id="clearBtn">Clear</button>
+        </div>
+      </header>
+
+      <!-- Dashboard -->
+      <section class="page active" id="dashboard-page">
+        <div class="page-heading">
+          <div>
+            <h2>Team dashboard</h2>
+            <p>The stuff a coach usually needs first: who is coming, how many players are on the roster, and what still needs attention.</p>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="card stat-card">
+            <div class="stat-label">Players</div>
+            <div class="stat-value" id="dashPlayerCount">0</div>
+            <div class="stat-note">active roster</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-label">Available</div>
+            <div class="stat-value" id="dashAvailableCount">0</div>
+            <div class="stat-note">for the next event</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-label">Attendance</div>
+            <div class="stat-value" id="dashAttendanceRate">0%</div>
+            <div class="stat-note">latest saved practice</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-label">Lineup</div>
+            <div class="stat-value" id="dashLineupCount">0</div>
+            <div class="stat-note">selected for next match</div>
+          </div>
+        </div>
+
+        <div class="grid-2 section-gap">
+          <div class="card card-pad">
+            <h3 class="card-title">Next team event</h3>
+            <p class="card-subtitle">Edit this before each practice or game.</p>
+
+            <div class="form-grid section-gap">
+              <div>
+                <label for="eventName">Event</label>
+                <input id="eventName" value="Saturday Practice" />
+              </div>
+              <div>
+                <label for="eventDate">Date</label>
+                <input id="eventDate" type="date" />
+              </div>
+              <div>
+                <label for="eventTime">Time</label>
+                <input id="eventTime" type="time" value="17:30" />
+              </div>
+              <div>
+                <label for="eventLocation">Location</label>
+                <input id="eventLocation" value="NY Ovals" />
+              </div>
+            </div>
+            <div class="toolbar">
+              <span class="small-note">Changing this also updates the Availability page heading.</span>
+              <button class="btn btn-primary" id="saveEventBtn">Save event</button>
+            </div>
+            <div class="event-strip" id="eventPreview"></div>
+          </div>
+
+          <div class="card card-pad">
+            <h3 class="card-title">Game-day checklist</h3>
+            <p class="card-subtitle">A simple checklist instead of another giant dashboard.</p>
+            <div class="list" id="checklist"></div>
+          </div>
+        </div>
+
+        <div class="card card-pad section-gap">
+          <h3 class="card-title">Availability snapshot</h3>
+          <p class="card-subtitle">This updates as players respond.</p>
+          <div class="list" id="availabilitySnapshot"></div>
+        </div>
+      </section>
+
+      <!-- Availability -->
+      <section class="page" id="availability-page">
+        <div class="page-heading">
+          <div>
+            <h2>Player availability</h2>
+            <p id="availabilityEventText">Set the next event from the dashboard, then mark each player as going, maybe, or unavailable.</p>
+          </div>
+        </div>
+
+        <div class="card card-pad">
+          <div class="toolbar">
+            <div>
+              <h3 class="card-title">Responses</h3>
+              <p class="card-subtitle">No WhatsApp scrolling required.</p>
+            </div>
+            <button class="btn btn-primary" id="saveAvailabilityBtn">Save availability</button>
+          </div>
+          <div class="table-wrap">
+            <table class="availability-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Age group</th>
+                  <th>Status</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody id="availabilityBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="availabilityEmpty">Add players first, then availability will show up here.</div>
+        </div>
+      </section>
+
+      <!-- Attendance -->
+      <section class="page" id="attendance-page">
+        <div class="page-heading">
+          <div>
+            <h2>Practice attendance</h2>
+            <p>Pick the date, tap who attended, and save it. The dashboard uses the latest saved practice for the attendance rate.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card card-pad">
+            <h3 class="card-title">Take attendance</h3>
+            <div class="toolbar">
+              <div style="min-width:220px;">
+                <label for="attendanceDate">Practice date</label>
+                <input type="date" id="attendanceDate" />
+              </div>
+              <button class="btn btn-primary" id="saveAttendanceBtn">Save practice</button>
+            </div>
+            <div class="table-wrap">
+              <table class="attendance-table">
+                <thead>
+                  <tr>
+                    <th>Attended</th>
+                    <th>Player</th>
+                    <th>Age group</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceBody"></tbody>
+              </table>
+            </div>
+            <div class="empty-state" id="attendanceEmpty">Add players before taking attendance.</div>
+          </div>
+
+          <div class="card card-pad">
+            <h3 class="card-title">Recent practices</h3>
+            <p class="card-subtitle">A quick record of the last few sessions.</p>
+            <div class="list" id="attendanceHistory"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Players -->
+      <section class="page" id="players-page">
+        <div class="page-heading">
+          <div>
+            <h2>Player development</h2>
+            <p>Keep cricket details and coaching notes together so development does not disappear into random messages.</p>
+          </div>
+          <button class="btn btn-primary no-print" id="showAddPlayerBtn">Add player</button>
+        </div>
+
+        <div class="card card-pad" id="addPlayerCard" style="display:none; margin-bottom:18px;">
+          <h3 class="card-title">Add a player</h3>
+          <p class="card-subtitle">Only the name is required. Everything else can be filled in later.</p>
+          <div class="form-grid section-gap">
+            <div>
+              <label for="playerNameInput">Player name</label>
+              <input id="playerNameInput" placeholder="e.g. Aarav Patel" />
+            </div>
+            <div>
+              <label for="playerAgeGroupInput">Age group</label>
+              <select id="playerAgeGroupInput">
+                <option value="U12">U12</option>
+                <option value="U14">U14</option>
+                <option value="U16">U16</option>
+                <option value="U17">U17</option>
+                <option value="U19">U19</option>
+                <option value="Senior">Senior</option>
+              </select>
+            </div>
+            <div>
+              <label for="battingRoleInput">Batting role</label>
+              <input id="battingRoleInput" placeholder="Opener, middle order, finisher..." />
+            </div>
+            <div>
+              <label for="bowlingTypeInput">Bowling type</label>
+              <input id="bowlingTypeInput" placeholder="Right-arm medium, off-spin..." />
+            </div>
+            <div>
+              <label for="keeperInput">Wicketkeeper?</label>
+              <select id="keeperInput">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+            <div>
+              <label for="playerRoleInput">Main role</label>
+              <select id="playerRoleInput">
+                <option value="Batter">Batter</option>
+                <option value="Bowler">Bowler</option>
+                <option value="All-Rounder">All-Rounder</option>
+                <option value="Wicketkeeper-Batter">Wicketkeeper-Batter</option>
+              </select>
+            </div>
+            <div class="full">
+              <label for="strengthsInput">Strengths</label>
+              <textarea id="strengthsInput" placeholder="What is this player already good at?"></textarea>
+            </div>
+            <div class="full">
+              <label for="improveInput">Areas to improve</label>
+              <textarea id="improveInput" placeholder="What should coaches focus on next?"></textarea>
+            </div>
+            <div class="full">
+              <label for="goalsInput">Current goals</label>
+              <textarea id="goalsInput" placeholder="Example: improve strike rotation, land 5/6 yorkers..."></textarea>
+            </div>
+            <div class="full">
+              <label for="notesInput">Coach notes</label>
+              <textarea id="notesInput" placeholder="Short notes from practice or matches"></textarea>
+            </div>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-secondary" id="cancelAddPlayerBtn">Cancel</button>
+            <button class="btn btn-primary" id="addPlayerBtn">Save player</button>
+          </div>
+        </div>
+
+        <div class="player-layout">
+          <div class="card card-pad">
+            <label for="playerSearch">Search roster</label>
+            <input id="playerSearch" placeholder="Name, age group, role..." />
+            <div id="playerList" class="section-gap"></div>
+          </div>
+
+          <div class="card card-pad" id="playerProfileCard">
+            <div class="empty-state" id="playerProfileEmpty">Choose a player to view their development profile.</div>
+            <div id="playerProfile" style="display:none;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lineup -->
+      <section class="page" id="lineup-page">
+        <div class="page-heading">
+          <div>
+            <h2>Match lineup builder</h2>
+            <p>Select the squad, arrange the batting order, choose captain and wicketkeeper, then print a clean match sheet.</p>
+          </div>
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <div class="form-grid">
+            <div>
+              <label for="matchOpponent">Opponent</label>
+              <input id="matchOpponent" placeholder="Opponent name" />
+            </div>
+            <div>
+              <label for="matchDate">Match date</label>
+              <input id="matchDate" type="date" />
+            </div>
+            <div>
+              <label for="matchFormat">Format</label>
+              <select id="matchFormat">
+                <option value="6 overs">6 overs</option>
+                <option value="10 overs">10 overs</option>
+                <option value="20 overs">20 overs</option>
+                <option value="25 overs" selected>25 overs</option>
+                <option value="50 overs">50 overs</option>
+              </select>
+            </div>
+            <div>
+              <label for="matchVenue">Venue</label>
+              <input id="matchVenue" value="NY Ovals" />
+            </div>
+          </div>
+        </div>
+
+        <div class="lineup-builder">
+          <div class="card card-pad">
+            <h3 class="card-title">1. Select squad</h3>
+            <p class="card-subtitle">Tick the players who are in this match.</p>
+            <div class="checkbox-list section-gap" id="lineupPlayerOptions"></div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="toolbar">
+              <div>
+                <h3 class="card-title">2. Batting order</h3>
+                <p class="card-subtitle">Use the arrows to move players up or down.</p>
+              </div>
+              <span class="badge" id="lineupCountBadge">0 selected</span>
+            </div>
+            <div id="battingOrder"></div>
+
+            <div class="form-grid section-gap">
+              <div>
+                <label for="captainSelect">Captain</label>
+                <select id="captainSelect"></select>
+              </div>
+              <div>
+                <label for="keeperSelect">Wicketkeeper</label>
+                <select id="keeperSelect"></select>
+              </div>
+              <div class="full">
+                <label for="substitutesInput">Substitutes / reserves</label>
+                <input id="substitutesInput" placeholder="Optional names" />
+              </div>
+            </div>
+
+            <div class="toolbar section-gap">
+              <span class="small-note">The match sheet uses your current batting order and bowling plan.</span>
+              <button class="btn btn-primary" id="printMatchSheetBtn">Generate match sheet</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bowling -->
+      <section class="page" id="bowling-page">
+        <div class="page-heading">
+          <div>
+            <h2>Bowling planner</h2>
+            <p>Assign one bowler per over. TeamOS will warn you if someone goes over the limit you set.</p>
+          </div>
+        </div>
+
+        <div class="card card-pad">
+          <div class="form-grid">
+            <div>
+              <label for="bowlingOvers">Number of overs</label>
+              <input id="bowlingOvers" type="number" min="1" max="50" value="25" />
+            </div>
+            <div>
+              <label for="maxOversPerBowler">Max overs per bowler</label>
+              <input id="maxOversPerBowler" type="number" min="1" max="10" value="5" />
+            </div>
+          </div>
+          <div class="toolbar">
+            <span class="small-note">Set the limit to match the rules for your tournament.</span>
+            <button class="btn btn-secondary" id="rebuildBowlingBtn">Update overs</button>
+          </div>
+
+          <div class="table-wrap">
+            <table class="bowling-table">
+              <thead>
+                <tr>
+                  <th>Over</th>
+                  <th>Bowler</th>
+                  <th>Bowler's total</th>
+                </tr>
+              </thead>
+              <tbody id="bowlingBody"></tbody>
+            </table>
+          </div>
+          <div id="bowlingWarnings"></div>
+        </div>
+      </section>
+
+      <!-- Only shown when printing -->
+      <section class="page" id="match-sheet-print">
+        <div class="card card-pad print-sheet" id="printSheetContent"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // -----------------------------
+    // NY Ovals TeamOS
+    // The first version intentionally uses localStorage instead of a backend.
+    // It makes the project easy to run on GitHub Pages and easy to understand.
+    // -----------------------------
+
+    const STORAGE_KEY = "ny_ovals_team_os_v1";
+
+    const defaultState = {
+      players: [],
+      event: {
+        name: "Saturday Practice",
+        date: "",
+        time: "17:30",
+        location: "NY Ovals"
+      },
+      availability: {},
+      attendanceHistory: [],
+      lineup: [],
+      captainId: "",
+      keeperId: "",
+      substitutes: "",
+      match: {
+        opponent: "",
+        date: "",
+        format: "25 overs",
+        venue: "NY Ovals"
+      },
+      bowling: {
+        overs: 25,
+        maxPerBowler: 5,
+        assignments: []
+      },
+      checklist: {
+        availability: false,
+        lineup: false,
+        bowling: false,
+        matchSheet: false
+      }
+    };
+
+    let state = loadState();
+    let selectedPlayerId = state.players[0]?.id || "";
+
+    const pageCopy = {
+      dashboard: ["Dashboard", "A quick look at the team before practice or game day."],
+      availability: ["Availability", "See who is actually free before you build a lineup."],
+      attendance: ["Attendance", "Keep a simple practice record across the season."],
+      players: ["Players", "Development profiles and coach notes in one place."],
+      lineup: ["Match Lineup", "Build the squad and batting order for the next game."],
+      bowling: ["Bowling Plan", "Plan the overs and catch limit problems before the match."]
+    };
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return saved ? { ...defaultState, ...saved } : structuredClone(defaultState);
+      } catch (error) {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState(message) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (message) showToast(message);
+    }
+
+    function makeId() {
+      return "p_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function todayString() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function readableDate(value) {
+      if (!value) return "Date not set";
+      const date = new Date(value + "T12:00:00");
+      return date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      });
+    }
+
+    function playerById(id) {
+      return state.players.find(player => player.id === id);
+    }
+
+    function selectedLineupPlayers() {
+      return state.lineup.map(playerById).filter(Boolean);
+    }
+
+    function showPage(pageName) {
+      document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+      document.getElementById(pageName + "-page").classList.add("active");
+
+      document.querySelectorAll(".nav-btn").forEach(button => {
+        button.classList.toggle("active", button.dataset.page === pageName);
+      });
+
+      const [title, subtitle] = pageCopy[pageName];
+      document.getElementById("topbarTitle").textContent = title;
+      document.getElementById("topbarSubtitle").textContent = subtitle;
+
+      document.getElementById("sideNav").classList.remove("open");
+    }
+
+    function renderAll() {
+      renderDashboard();
+      renderAvailability();
+      renderAttendance();
+      renderPlayerList();
+      renderPlayerProfile();
+      renderLineup();
+      renderBowlingPlan();
+      fillSavedFormValues();
+    }
+
+    // -----------------------------
+    // Dashboard
+    // -----------------------------
+
+    function renderDashboard() {
+      const available = Object.values(state.availability).filter(item => item.status === "Going").length;
+      const latestAttendance = state.attendanceHistory[0];
+      const attendanceRate = latestAttendance && state.players.length
+        ? Math.round((latestAttendance.presentIds.length / state.players.length) * 100)
+        : 0;
+
+      document.getElementById("dashPlayerCount").textContent = state.players.length;
+      document.getElementById("dashAvailableCount").textContent = available;
+      document.getElementById("dashAttendanceRate").textContent = attendanceRate + "%";
+      document.getElementById("dashLineupCount").textContent = state.lineup.length;
+
+      const event = state.event;
+      document.getElementById("eventPreview").innerHTML = `
+        <strong>${escapeHtml(event.name || "Next event")}</strong><br>
+        <span class="small-note">${escapeHtml(readableDate(event.date))} ${event.time ? "- " + escapeHtml(event.time) : ""} ${event.location ? "- " + escapeHtml(event.location) : ""}</span>
+      `;
+
+      document.getElementById("availabilityEventText").textContent =
+        `${event.name || "Next event"} - ${readableDate(event.date)}${event.location ? " - " + event.location : ""}`;
+
+      renderChecklist();
+      renderAvailabilitySnapshot();
+    }
+
+    function renderChecklist() {
+      const items = [
+        ["availability", "Availability collected", "Know who can actually play."],
+        ["lineup", "Lineup finalized", "Batting order, captain and wicketkeeper are set."],
+        ["bowling", "Bowling plan ready", "Check the overs before match day."],
+        ["matchSheet", "Match sheet printed", "Bring one clean copy for the coaches."]
+      ];
+
+      document.getElementById("checklist").innerHTML = items.map(([key, title, note]) => `
+        <label class="list-row" style="justify-content:flex-start; cursor:pointer;">
+          <input type="checkbox" data-checklist="${key}" ${state.checklist[key] ? "checked" : ""} style="width:auto;">
+          <span>
+            <strong>${title}</strong>
+            <div class="meta">${note}</div>
+          </span>
+        </label>
+      `).join("");
+
+      document.querySelectorAll("[data-checklist]").forEach(input => {
+        input.addEventListener("change", () => {
+          state.checklist[input.dataset.checklist] = input.checked;
+          saveState();
+        });
+      });
+    }
+
+    function renderAvailabilitySnapshot() {
+      const container = document.getElementById("availabilitySnapshot");
+
+      if (!state.players.length) {
+        container.innerHTML = `<div class="empty-state">No players yet. Add the roster from the Players page.</div>`;
+        return;
+      }
+
+      const groups = {
+        Going: [],
+        Maybe: [],
+        No: [],
+        "No response": []
+      };
+
+      state.players.forEach(player => {
+        const status = state.availability[player.id]?.status || "No response";
+        groups[status].push(player.name);
+      });
+
+      container.innerHTML = Object.entries(groups).map(([status, names]) => `
+        <div class="list-row">
+          <div>
+            <strong>${status}</strong>
+            <div class="meta">${names.length ? escapeHtml(names.join(", ")) : "None yet"}</div>
+          </div>
+          <span class="badge ${status === "Going" ? "green" : status === "Maybe" ? "warning" : ""}">${names.length}</span>
+        </div>
+      `).join("");
+    }
+
+    function saveEvent() {
+      state.event = {
+        name: document.getElementById("eventName").value.trim(),
+        date: document.getElementById("eventDate").value,
+        time: document.getElementById("eventTime").value,
+        location: document.getElementById("eventLocation").value.trim()
+      };
+      saveState("Event saved");
+      renderDashboard();
+    }
+
+    // -----------------------------
+    // Availability
+    // -----------------------------
+
+    function renderAvailability() {
+      const body = document.getElementById("availabilityBody");
+      const empty = document.getElementById("availabilityEmpty");
+
+      if (!state.players.length) {
+        body.innerHTML = "";
+        empty.style.display = "block";
+        return;
+      }
+
+      empty.style.display = "none";
+      body.innerHTML = state.players.map(player => {
+        const response = state.availability[player.id] || { status: "No response", note: "" };
+        return `
+          <tr>
+            <td><strong>${escapeHtml(player.name)}</strong></td>
+            <td>${escapeHtml(player.ageGroup)}</td>
+            <td>
+              <select class="availability-status" data-player-id="${player.id}">
+                ${["No response", "Going", "Maybe", "No"].map(status =>
+                  `<option value="${status}" ${response.status === status ? "selected" : ""}>${status}</option>`
+                ).join("")}
+              </select>
+            </td>
+            <td>
+              <input class="availability-note" data-player-id="${player.id}" value="${escapeHtml(response.note || "")}" placeholder="Optional note" />
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function saveAvailability() {
+      document.querySelectorAll(".availability-status").forEach(select => {
+        const id = select.dataset.playerId;
+        const note = document.querySelector(`.availability-note[data-player-id="${id}"]`).value.trim();
+        state.availability[id] = {
+          status: select.value,
+          note
+        };
+      });
+
+      saveState("Availability saved");
+      renderDashboard();
+    }
+
+    // -----------------------------
+    // Attendance
+    // -----------------------------
+
+    function renderAttendance() {
+      const body = document.getElementById("attendanceBody");
+      const empty = document.getElementById("attendanceEmpty");
+
+      if (!state.players.length) {
+        body.innerHTML = "";
+        empty.style.display = "block";
+      } else {
+        empty.style.display = "none";
+        body.innerHTML = state.players.map(player => `
+          <tr>
+            <td><input type="checkbox" class="attendance-check" data-player-id="${player.id}" style="width:auto;"></td>
+            <td><strong>${escapeHtml(player.name)}</strong></td>
+            <td>${escapeHtml(player.ageGroup)}</td>
+          </tr>
+        `).join("");
+      }
+
+      const history = document.getElementById("attendanceHistory");
+      if (!state.attendanceHistory.length) {
+        history.innerHTML = `<div class="empty-state">No practices saved yet.</div>`;
+        return;
+      }
+
+      history.innerHTML = state.attendanceHistory.slice(0, 8).map(session => {
+        const percent = state.players.length
+          ? Math.round((session.presentIds.length / state.players.length) * 100)
+          : 0;
+        return `
+          <div class="list-row">
+            <div>
+              <strong>${readableDate(session.date)}</strong>
+              <div class="meta">${session.presentIds.length} attended</div>
+            </div>
+            <span class="badge green">${percent}%</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function saveAttendance() {
+      const date = document.getElementById("attendanceDate").value;
+      if (!date) {
+        showToast("Choose a practice date first");
+        return;
+      }
+
+      const presentIds = [...document.querySelectorAll(".attendance-check:checked")]
+        .map(input => input.dataset.playerId);
+
+      const existingIndex = state.attendanceHistory.findIndex(session => session.date === date);
+      const session = { date, presentIds };
+
+      if (existingIndex >= 0) {
+        state.attendanceHistory[existingIndex] = session;
+      } else {
+        state.attendanceHistory.push(session);
+      }
+
+      state.attendanceHistory.sort((a, b) => b.date.localeCompare(a.date));
+      saveState("Attendance saved");
+      renderAll();
+    }
+
+    // -----------------------------
+    // Players
+    // -----------------------------
+
+    function addPlayer() {
+      const name = document.getElementById("playerNameInput").value.trim();
+      if (!name) {
+        showToast("Player name is required");
+        return;
+      }
+
+      const player = {
+        id: makeId(),
+        name,
+        ageGroup: document.getElementById("playerAgeGroupInput").value,
+        battingRole: document.getElementById("battingRoleInput").value.trim(),
+        bowlingType: document.getElementById("bowlingTypeInput").value.trim(),
+        wicketkeeper: document.getElementById("keeperInput").value,
+        role: document.getElementById("playerRoleInput").value,
+        strengths: document.getElementById("strengthsInput").value.trim(),
+        improve: document.getElementById("improveInput").value.trim(),
+        goals: document.getElementById("goalsInput").value.trim(),
+        notes: document.getElementById("notesInput").value.trim()
+      };
+
+      state.players.push(player);
+      selectedPlayerId = player.id;
+      saveState("Player added");
+      clearPlayerForm();
+      document.getElementById("addPlayerCard").style.display = "none";
+      renderAll();
+    }
+
+    function clearPlayerForm() {
+      [
+        "playerNameInput",
+        "battingRoleInput",
+        "bowlingTypeInput",
+        "strengthsInput",
+        "improveInput",
+        "goalsInput",
+        "notesInput"
+      ].forEach(id => document.getElementById(id).value = "");
+    }
+
+    function renderPlayerList() {
+      const search = document.getElementById("playerSearch").value.trim().toLowerCase();
+      const list = document.getElementById("playerList");
+
+      const filtered = state.players.filter(player => {
+        const haystack = [player.name, player.ageGroup, player.role, player.battingRole, player.bowlingType]
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(search);
+      });
+
+      if (!filtered.length) {
+        list.innerHTML = `<div class="empty-state">${state.players.length ? "No matching players." : "No players yet. Add your first player above."}</div>`;
+        return;
+      }
+
+      list.innerHTML = filtered.map(player => `
+        <button class="player-button ${selectedPlayerId === player.id ? "active" : ""}" data-player-id="${player.id}">
+          <strong>${escapeHtml(player.name)}</strong>
+          <div class="meta">${escapeHtml(player.ageGroup)} - ${escapeHtml(player.role)}</div>
+        </button>
+      `).join("");
+
+      list.querySelectorAll(".player-button").forEach(button => {
+        button.addEventListener("click", () => {
+          selectedPlayerId = button.dataset.playerId;
+          renderPlayerList();
+          renderPlayerProfile();
+        });
+      });
+    }
+
+    function renderPlayerProfile() {
+      const empty = document.getElementById("playerProfileEmpty");
+      const profile = document.getElementById("playerProfile");
+      const player = playerById(selectedPlayerId);
+
+      if (!player) {
+        empty.style.display = "block";
+        profile.style.display = "none";
+        return;
+      }
+
+      empty.style.display = "none";
+      profile.style.display = "block";
+
+      profile.innerHTML = `
+        <div class="toolbar">
+          <div>
+            <h3 class="card-title" style="font-size:22px;">${escapeHtml(player.name)}</h3>
+            <p class="card-subtitle">${escapeHtml(player.ageGroup)} - ${escapeHtml(player.role)}</p>
+          </div>
+          <button class="btn btn-danger btn-small" id="deletePlayerBtn">Delete player</button>
+        </div>
+
+        <div class="profile-grid">
+          <div class="info-box"><small>Batting role</small><strong>${escapeHtml(player.battingRole || "Not set")}</strong></div>
+          <div class="info-box"><small>Bowling type</small><strong>${escapeHtml(player.bowlingType || "Not set")}</strong></div>
+          <div class="info-box"><small>Wicketkeeper</small><strong>${escapeHtml(player.wicketkeeper || "No")}</strong></div>
+        </div>
+
+        <div class="grid-2 section-gap">
+          <div class="info-box"><small>Strengths</small><div>${escapeHtml(player.strengths || "No notes yet")}</div></div>
+          <div class="info-box"><small>Areas to improve</small><div>${escapeHtml(player.improve || "No notes yet")}</div></div>
+          <div class="info-box"><small>Current goals</small><div>${escapeHtml(player.goals || "No goals set")}</div></div>
+          <div class="info-box"><small>Coach notes</small><div>${escapeHtml(player.notes || "No notes yet")}</div></div>
+        </div>
+      `;
+
+      document.getElementById("deletePlayerBtn").addEventListener("click", () => deletePlayer(player.id));
+    }
+
+    function deletePlayer(id) {
+      const player = playerById(id);
+      if (!player) return;
+      if (!confirm(`Delete ${player.name}?`)) return;
+
+      state.players = state.players.filter(item => item.id !== id);
+      state.lineup = state.lineup.filter(playerId => playerId !== id);
+      delete state.availability[id];
+      state.attendanceHistory.forEach(session => {
+        session.presentIds = session.presentIds.filter(playerId => playerId !== id);
+      });
+      state.bowling.assignments = state.bowling.assignments.map(playerId => playerId === id ? "" : playerId);
+
+      selectedPlayerId = state.players[0]?.id || "";
+      saveState("Player deleted");
+      renderAll();
+    }
+
+    // -----------------------------
+    // Lineup builder
+    // -----------------------------
+
+    function renderLineup() {
+      const optionList = document.getElementById("lineupPlayerOptions");
+
+      if (!state.players.length) {
+        optionList.innerHTML = `<div class="empty-state">Add players first.</div>`;
+      } else {
+        optionList.innerHTML = state.players.map(player => `
+          <label class="check-row">
+            <input type="checkbox" class="lineup-check" data-player-id="${player.id}" ${state.lineup.includes(player.id) ? "checked" : ""}>
+            <span>
+              <strong>${escapeHtml(player.name)}</strong>
+              <div class="meta">${escapeHtml(player.role)} - ${escapeHtml(player.ageGroup)}</div>
+            </span>
+          </label>
+        `).join("");
+      }
+
+      document.querySelectorAll(".lineup-check").forEach(input => {
+        input.addEventListener("change", () => toggleLineupPlayer(input.dataset.playerId, input.checked));
+      });
+
+      renderBattingOrder();
+      fillLineupRoleSelects();
+    }
+
+    function toggleLineupPlayer(id, checked) {
+      if (checked && !state.lineup.includes(id)) {
+        state.lineup.push(id);
+      }
+
+      if (!checked) {
+        state.lineup = state.lineup.filter(playerId => playerId !== id);
+        if (state.captainId === id) state.captainId = "";
+        if (state.keeperId === id) state.keeperId = "";
+      }
+
+      saveState();
+      renderLineup();
+      renderDashboard();
+      renderBowlingPlan();
+    }
+
+    function renderBattingOrder() {
+      const container = document.getElementById("battingOrder");
+      const lineupPlayers = selectedLineupPlayers();
+      document.getElementById("lineupCountBadge").textContent = `${lineupPlayers.length} selected`;
+
+      if (!lineupPlayers.length) {
+        container.innerHTML = `<div class="empty-state">Select players on the left to start the batting order.</div>`;
+        return;
+      }
+
+      container.innerHTML = lineupPlayers.map((player, index) => `
+        <div class="lineup-item">
+          <div class="lineup-number">${index + 1}</div>
+          <div>
+            <strong>${escapeHtml(player.name)}</strong>
+            <div class="meta">${escapeHtml(player.battingRole || player.role)}</div>
+          </div>
+          <div class="move-buttons">
+            <button data-move="up" data-index="${index}" ${index === 0 ? "disabled" : ""}>Move up</button>
+            <button data-move="down" data-index="${index}" ${index === lineupPlayers.length - 1 ? "disabled" : ""}>Move down</button>
+          </div>
+        </div>
+      `).join("");
+
+      container.querySelectorAll("[data-move]").forEach(button => {
+        button.addEventListener("click", () => {
+          moveLineupPlayer(Number(button.dataset.index), button.dataset.move);
+        });
+      });
+    }
+
+    function moveLineupPlayer(index, direction) {
+      const target = direction === "up" ? index - 1 : index + 1;
+      if (target < 0 || target >= state.lineup.length) return;
+
+      [state.lineup[index], state.lineup[target]] = [state.lineup[target], state.lineup[index]];
+      saveState();
+      renderBattingOrder();
+    }
+
+    function fillLineupRoleSelects() {
+      const players = selectedLineupPlayers();
+      const options = `<option value="">Not selected</option>` + players.map(player =>
+        `<option value="${player.id}">${escapeHtml(player.name)}</option>`
+      ).join("");
+
+      const captainSelect = document.getElementById("captainSelect");
+      const keeperSelect = document.getElementById("keeperSelect");
+      captainSelect.innerHTML = options;
+      keeperSelect.innerHTML = options;
+      captainSelect.value = state.captainId;
+      keeperSelect.value = state.keeperId;
+    }
+
+    function saveMatchForm() {
+      state.match = {
+        opponent: document.getElementById("matchOpponent").value.trim(),
+        date: document.getElementById("matchDate").value,
+        format: document.getElementById("matchFormat").value,
+        venue: document.getElementById("matchVenue").value.trim()
+      };
+      state.captainId = document.getElementById("captainSelect").value;
+      state.keeperId = document.getElementById("keeperSelect").value;
+      state.substitutes = document.getElementById("substitutesInput").value.trim();
+      saveState();
+    }
+
+    // -----------------------------
+    // Bowling planner
+    // -----------------------------
+
+    function renderBowlingPlan() {
+      const overs = Math.max(1, Math.min(50, Number(state.bowling.overs) || 1));
+      state.bowling.overs = overs;
+
+      while (state.bowling.assignments.length < overs) {
+        state.bowling.assignments.push("");
+      }
+      state.bowling.assignments = state.bowling.assignments.slice(0, overs);
+
+      const bowlerPool = state.lineup.length ? selectedLineupPlayers() : state.players;
+      const body = document.getElementById("bowlingBody");
+
+      if (!bowlerPool.length) {
+        body.innerHTML = `<tr><td colspan="3"><div class="empty-state">Add players, then assign bowlers here.</div></td></tr>`;
+        document.getElementById("bowlingWarnings").innerHTML = "";
+        return;
+      }
+
+      const counts = getBowlingCounts();
+
+      body.innerHTML = state.bowling.assignments.map((playerId, index) => `
+        <tr>
+          <td><strong>${index + 1}</strong></td>
+          <td>
+            <select class="bowler-select" data-over-index="${index}">
+              <option value="">Choose bowler</option>
+              ${bowlerPool.map(player => `
+                <option value="${player.id}" ${player.id === playerId ? "selected" : ""}>${escapeHtml(player.name)}</option>
+              `).join("")}
+            </select>
+          </td>
+          <td>${playerId ? (counts[playerId] || 0) + " over" + ((counts[playerId] || 0) === 1 ? "" : "s") : "-"}</td>
+        </tr>
+      `).join("");
+
+      body.querySelectorAll(".bowler-select").forEach(select => {
+        select.addEventListener("change", () => {
+          state.bowling.assignments[Number(select.dataset.overIndex)] = select.value;
+          saveState();
+          renderBowlingPlan();
+        });
+      });
+
+      renderBowlingWarnings();
+    }
+
+    function getBowlingCounts() {
+      return state.bowling.assignments.reduce((counts, playerId) => {
+        if (playerId) counts[playerId] = (counts[playerId] || 0) + 1;
+        return counts;
+      }, {});
+    }
+
+    function renderBowlingWarnings() {
+      const counts = getBowlingCounts();
+      const max = Number(state.bowling.maxPerBowler) || 1;
+      const warnings = Object.entries(counts)
+        .filter(([, count]) => count > max)
+        .map(([playerId, count]) => {
+          const player = playerById(playerId);
+          return `${player?.name || "A bowler"} is assigned ${count} overs, which is above the ${max}-over limit.`;
+        });
+
+      const container = document.getElementById("bowlingWarnings");
+      container.innerHTML = warnings.length
+        ? warnings.map(text => `<div class="warning-box"><strong>Check bowling limit:</strong> ${escapeHtml(text)}</div>`).join("")
+        : "";
+    }
+
+    function rebuildBowlingPlan() {
+      state.bowling.overs = Math.max(1, Math.min(50, Number(document.getElementById("bowlingOvers").value) || 1));
+      state.bowling.maxPerBowler = Math.max(1, Number(document.getElementById("maxOversPerBowler").value) || 1);
+      saveState("Bowling plan updated");
+      renderBowlingPlan();
+    }
+
+    // -----------------------------
+    // Match sheet / print to PDF
+    // -----------------------------
+
+    function printMatchSheet() {
+      saveMatchForm();
+
+      if (!state.lineup.length) {
+        showToast("Select a lineup first");
+        return;
+      }
+
+      const captain = playerById(state.captainId)?.name || "Not set";
+      const keeper = playerById(state.keeperId)?.name || "Not set";
+      const counts = getBowlingCounts();
+
+      const bowlingRows = state.bowling.assignments
+        .map((playerId, index) => ({ index, player: playerById(playerId) }))
+        .filter(item => item.player)
+        .map(item => `<tr><td>${item.index + 1}</td><td>${escapeHtml(item.player.name)}</td></tr>`)
+        .join("");
+
+      document.getElementById("printSheetContent").innerHTML = `
+        <div style="border-bottom:3px solid #183153; padding-bottom:14px; margin-bottom:18px;">
+          <div style="font-size:13px; color:#667085; font-weight:700;">NY OVALS</div>
+          <h1 style="margin:4px 0 0; color:#10233d;">Match Sheet</h1>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:20px;">
+          <div><strong>Opponent:</strong> ${escapeHtml(state.match.opponent || "Not set")}</div>
+          <div><strong>Date:</strong> ${escapeHtml(readableDate(state.match.date))}</div>
+          <div><strong>Format:</strong> ${escapeHtml(state.match.format)}</div>
+          <div><strong>Venue:</strong> ${escapeHtml(state.match.venue || "Not set")}</div>
+          <div><strong>Captain:</strong> ${escapeHtml(captain)}</div>
+          <div><strong>Wicketkeeper:</strong> ${escapeHtml(keeper)}</div>
+        </div>
+
+        <h3 style="color:#10233d;">Batting Order</h3>
+        <ol style="line-height:1.8;">
+          ${selectedLineupPlayers().map(player => `<li>${escapeHtml(player.name)} <span style="color:#667085;">- ${escapeHtml(player.role)}</span></li>`).join("")}
+        </ol>
+
+        <h3 style="color:#10233d; margin-top:24px;">Bowling Plan</h3>
+        ${bowlingRows ? `
+          <table class="bowling-table">
+            <thead><tr><th>Over</th><th>Bowler</th></tr></thead>
+            <tbody>${bowlingRows}</tbody>
+          </table>
+        ` : `<p>No bowling assignments yet.</p>`}
+
+        <div style="margin-top:20px;"><strong>Substitutes / reserves:</strong> ${escapeHtml(state.substitutes || "Not set")}</div>
+        <div style="margin-top:8px; color:#667085; font-size:12px;">Bowling totals: ${Object.entries(counts).map(([id, count]) => `${escapeHtml(playerById(id)?.name || "Player")}: ${count}`).join(" - ") || "None assigned"}</div>
+      `;
+
+      state.checklist.matchSheet = true;
+      saveState();
+      renderChecklist();
+
+      document.getElementById("match-sheet-print").classList.add("active");
+      window.print();
+      document.getElementById("match-sheet-print").classList.remove("active");
+    }
+
+    // -----------------------------
+    // Demo / export / reset
+    // -----------------------------
+
+    function loadDemoRoster() {
+      if (state.players.length && !confirm("Replace your current data with a demo roster?")) return;
+
+      const demoPlayers = [
+        ["Aarav Shah", "U12", "Opener", "Right-arm medium", "No", "All-Rounder"],
+        ["Rohan Mehta", "U12", "Top order", "Leg-spin", "No", "All-Rounder"],
+        ["Vihaan Rao", "U12", "Middle order", "", "Yes", "Wicketkeeper-Batter"],
+        ["Kabir Patel", "U12", "Finisher", "Right-arm fast", "No", "Bowler"],
+        ["Arjun Nair", "U12", "Middle order", "Off-spin", "No", "All-Rounder"],
+        ["Dev Kumar", "U12", "Lower order", "Left-arm medium", "No", "Bowler"]
+      ];
+
+      state = structuredClone(defaultState);
+      state.event.date = todayString();
+      state.players = demoPlayers.map((row, index) => ({
+        id: "demo_" + index,
+        name: row[0],
+        ageGroup: row[1],
+        battingRole: row[2],
+        bowlingType: row[3],
+        wicketkeeper: row[4],
+        role: row[5],
+        strengths: index % 2 === 0 ? "Good game awareness and positive communication." : "Competes well and stays composed under pressure.",
+        improve: index % 2 === 0 ? "Work on strike rotation and calling between wickets." : "Keep working on consistency and fielding footwork.",
+        goals: "Set one measurable goal at the next practice.",
+        notes: "Demo profile - replace with real coaching notes."
+      }));
+
+      state.availability = {
+        demo_0: { status: "Going", note: "" },
+        demo_1: { status: "Going", note: "" },
+        demo_2: { status: "Maybe", note: "Waiting on ride" },
+        demo_3: { status: "Going", note: "" },
+        demo_4: { status: "No", note: "Family event" }
+      };
+
+      selectedPlayerId = state.players[0].id;
+      saveState("Demo roster loaded");
+      renderAll();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "ny-ovals-team-os-data.json";
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast("Data exported");
+    }
+
+    function clearAllData() {
+      if (!confirm("Clear all TeamOS data from this browser?")) return;
+      state = structuredClone(defaultState);
+      selectedPlayerId = "";
+      localStorage.removeItem(STORAGE_KEY);
+      renderAll();
+      showToast("TeamOS cleared");
+    }
+
+    function fillSavedFormValues() {
+      document.getElementById("eventName").value = state.event.name || "";
+      document.getElementById("eventDate").value = state.event.date || "";
+      document.getElementById("eventTime").value = state.event.time || "";
+      document.getElementById("eventLocation").value = state.event.location || "";
+
+      document.getElementById("matchOpponent").value = state.match.opponent || "";
+      document.getElementById("matchDate").value = state.match.date || "";
+      document.getElementById("matchFormat").value = state.match.format || "25 overs";
+      document.getElementById("matchVenue").value = state.match.venue || "";
+      document.getElementById("substitutesInput").value = state.substitutes || "";
+
+      document.getElementById("bowlingOvers").value = state.bowling.overs;
+      document.getElementById("maxOversPerBowler").value = state.bowling.maxPerBowler;
+    }
+
+    // -----------------------------
+    // Event listeners
+    // -----------------------------
+
+    document.querySelectorAll(".nav-btn").forEach(button => {
+      button.addEventListener("click", () => showPage(button.dataset.page));
+    });
+
+    document.getElementById("mobileMenuBtn").addEventListener("click", () => {
+      document.getElementById("sideNav").classList.toggle("open");
+    });
+
+    document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
+    document.getElementById("saveAvailabilityBtn").addEventListener("click", saveAvailability);
+    document.getElementById("saveAttendanceBtn").addEventListener("click", saveAttendance);
+
+    document.getElementById("showAddPlayerBtn").addEventListener("click", () => {
+      document.getElementById("addPlayerCard").style.display = "block";
+    });
+    document.getElementById("cancelAddPlayerBtn").addEventListener("click", () => {
+      document.getElementById("addPlayerCard").style.display = "none";
+    });
+    document.getElementById("addPlayerBtn").addEventListener("click", addPlayer);
+    document.getElementById("playerSearch").addEventListener("input", renderPlayerList);
+
+    document.getElementById("captainSelect").addEventListener("change", event => {
+      state.captainId = event.target.value;
+      saveState();
+    });
+    document.getElementById("keeperSelect").addEventListener("change", event => {
+      state.keeperId = event.target.value;
+      saveState();
+    });
+    document.getElementById("substitutesInput").addEventListener("change", event => {
+      state.substitutes = event.target.value.trim();
+      saveState();
+    });
+
+    ["matchOpponent", "matchDate", "matchFormat", "matchVenue"].forEach(id => {
+      document.getElementById(id).addEventListener("change", saveMatchForm);
+    });
+
+    document.getElementById("rebuildBowlingBtn").addEventListener("click", rebuildBowlingPlan);
+    document.getElementById("printMatchSheetBtn").addEventListener("click", printMatchSheet);
+
+    document.getElementById("loadDemoBtn").addEventListener("click", loadDemoRoster);
+    document.getElementById("exportBtn").addEventListener("click", exportData);
+    document.getElementById("clearBtn").addEventListener("click", clearAllData);
+
+    // Set convenient default dates on the very first visit.
+    if (!state.event.date) state.event.date = todayString();
+    if (!state.match.date) state.match.date = todayString();
+    document.getElementById("attendanceDate").value = todayString();
+
+    saveState();
+    renderAll();
+  </script>
+</body>
+</html>
